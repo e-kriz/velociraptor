@@ -28,6 +28,9 @@ sources:
                {
                  SELECT ServiceDll FROM read_reg_key(globs=servicesKeyGlob + Name + "\\Parameters")
                } AS ServiceDll,
+               {
+                 SELECT FailureCommand FROM read_reg_key(globs=servicesKeyGlob + Name)
+               } AS FailureCommand,
                parse_string_with_regex(regex=
                  ['^"(?P<AbsoluteExePath>[^"]+)','(?P<AbsoluteExePath>^[^ "]+)'], 
                  string=PathName).AbsoluteExePath as AbsoluteExePath
@@ -43,5 +46,5 @@ sources:
                     then=hash(path=ServiceDll,
                            accessor=file)) AS HashServiceDll,
                  if(condition=(CertificateInfo = "Y"),
-                    then=authenticode(filename=ServiceDll)) AS CertinfoServiceDll       
+                    then=authenticode(filename=ServiceDll)) AS CertinfoServiceDll                  
         FROM service
